@@ -50,7 +50,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         viewHolder.mTvOverview.setText(movie.getOverview());
 
         final RequestOptions options = new RequestOptions()
-                //.centerCrop()
+                .fitCenter()
                 .placeholder(R.drawable.ic_file_download_black_24dp)
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
 
