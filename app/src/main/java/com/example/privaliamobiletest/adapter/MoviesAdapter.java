@@ -27,7 +27,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     private Context mContext;
     private ViewHolder mViewHolder;
 
-    private static String baseImageUrl = "http://image.tmdb.org/t/p/w500";
+    private static String baseImageUrl = "https://image.tmdb.org/t/p/w1280";
 
     public MoviesAdapter(List<Movie> mMovieList, Context mContext) {
         this.mMovieList = mMovieList;
@@ -50,7 +50,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         viewHolder.mTvOverview.setText(movie.getOverview());
 
         final RequestOptions options = new RequestOptions()
-                .centerCrop()
+                //.centerCrop()
                 .placeholder(R.drawable.ic_file_download_black_24dp)
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
 
@@ -63,7 +63,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mMovieList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

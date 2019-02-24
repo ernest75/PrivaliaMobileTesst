@@ -1,21 +1,24 @@
 <android.support.v7.widget.Toolbar
+    android:id="@+id/toolbar"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="60dp"
     android:background="@color/colorPrimary"
-    android:elevation="4dp">
+    android:elevation="4dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+    <requestFocus />
+
     <EditText
         android:id="@+id/etSearch"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_height="40dp"
         android:background="@drawable/rounded_corner"
+        android:drawableEnd="@drawable/ic_search_black_24dp"
+        android:gravity="center"
         android:hint="@string/hint_movie_search"
         android:imeOptions="actionSearch"
-        android:inputType="text"
-        android:drawableRight="@drawable/ic_search_black_24dp"
-        android:drawableEnd="@drawable/ic_search_black_24dp"
-
-        />
+        android:inputType="text" />
 
 </android.support.v7.widget.Toolbar>

@@ -4,13 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".sccreens.main.MainActivity">
+    tools:context=".sccreens.main.MainActivity"
+    android:background="@color/colorBlack">
 
     <include
         android:id="@+id/include"
         layout="@layout/toolbar" />
 
     <android.support.v7.widget.RecyclerView
+        android:paddingTop="16dp"
+        android:id="@+id/rvMovies"
         android:layout_width="395dp"
         android:layout_height="603dp"
         android:layout_marginStart="8dp"
@@ -32,7 +35,8 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"/>
 
 
 </android.support.constraint.ConstraintLayout>
