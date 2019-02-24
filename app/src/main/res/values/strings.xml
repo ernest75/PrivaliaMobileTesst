@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PrivaliaMobileTest</string>
+    <string name="hint_movie_search">Type name of the movie</string>
+</resources>
