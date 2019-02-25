@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -14,10 +16,8 @@ import android.widget.Toast;
 
 import com.example.privaliamobiletest.R;
 import com.example.privaliamobiletest.adapter.MoviesAdapter;
-import com.example.privaliamobiletest.constants.Constants;
 import com.example.privaliamobiletest.dagger.App;
 import com.example.privaliamobiletest.networking.apimodels.Movie;
-import com.example.privaliamobiletest.networking.apimodels.MoviesResults;
 import com.example.privaliamobiletest.networking.retroofitservice.MovieDBService;
 
 import java.util.ArrayList;
@@ -27,12 +27,8 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements MainMVP.View {
-
 
     private final String LOG_TAG = getClass().getSimpleName();
 
@@ -45,23 +41,23 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
 
     @BindView(R.id.etSearch)
     EditText mEtSearch;
-    @BindView(R.id.progressBar)
-    ProgressBar mProgressBar;
+    @BindView(R.id.progressBarPagination)
+    ProgressBar mProgressBarPagination;
     @BindView(R.id.rvMovies)
     RecyclerView mRvMovies;
-
-
-    private Call<MoviesResults> tvMovieCall;
+    @BindView(R.id.progressBarBig)
+    ProgressBar mProgressBarBig;
 
     private MoviesAdapter mMoviesAdapter;
 
     private boolean loading = true;
+    private boolean isSearch;
     int pastVisiblesItems, visibleItemCount, totalItemCount, pageServer;
+    private CharSequence mCharSequenceSearch;
 
     private LinearLayoutManager mLayoutManager;
 
     private List<Movie> mMovieList = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
         setSupportActionBar(toolbar);
 
         configView();
-
         mPresenter.setView(this);
         mPresenter.loadData();
 
@@ -100,15 +95,50 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
                         if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                             loading = false;
                             pageServer++;
-                            Log.e(LOG_TAG,pageServer + "");
+                            if (pageServer < mPresenter.getTotalPagesCurrentPetition()) {
+                                if (isSearch) {
+                                    mPresenter.loadSearchedData(mCharSequenceSearch);
+                                } else {
+                                    mPresenter.loadData();
+                                }
+
+                                Log.e(LOG_TAG, "ENTERS HERE " + mPresenter.getTotalPagesCurrentPetition());
+                            } else {
+                                //inform user no more results
+                                Toast.makeText(mContext, "No more results to show", Toast.LENGTH_SHORT).show();
+                            }
+                            Log.e(LOG_TAG, pageServer + "");
                             Log.e("...", "Last Item Wow !");
                             //Do pagination.. i.e. fetch new data
-                            mPresenter.loadData();
                             //getPopuarMoviesFromServer(pageServer);
 
                         }
                     }
                 }
+            }
+        });
+
+        mEtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                mMovieList.clear();
+                mMoviesAdapter.notifyDataSetChanged();
+                if (charSequence.length() > 0) {
+                    mPresenter.loadSearchedData(charSequence);
+                    mCharSequenceSearch = charSequence;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                isSearch = true;
+                pageServer = 1;
+
             }
         });
 
@@ -129,15 +159,25 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
     }
 
     @Override
-    public void showProgressbar() {
-        mProgressBar.setVisibility(View.VISIBLE);
+    public void showProgressbarPagination() {
+        mProgressBarPagination.setVisibility(View.VISIBLE);
 
     }
 
     @Override
-    public void hideProgressbar() {
-        mProgressBar.setVisibility(View.GONE);
+    public void hideProgressbarPagination() {
+        mProgressBarPagination.setVisibility(View.GONE);
 
+    }
+
+    @Override
+    public void showProgressbarBig() {
+        mProgressBarBig.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressbarBig() {
+        mProgressBarBig.setVisibility(View.GONE);
     }
 
     @Override
@@ -152,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
 
     @Override
     public void showErrorFromNetwork(String message) {
-        Toast.makeText(mContext,message,Toast.LENGTH_LONG).show();
+        Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
 
     }
 
@@ -165,5 +205,23 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
     protected void onDestroy() {
         super.onDestroy();
         mPresenter.rxJavaUnsubscribe();
+        mPresenter.setView(null);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isSearch) {
+            mEtSearch.setText("");
+            mCharSequenceSearch = null;
+            isSearch = false;
+            pageServer = 1;
+            mMovieList.clear();
+            mMoviesAdapter.notifyDataSetChanged();
+            mPresenter.loadData();
+        } else {
+
+            super.onBackPressed();
+        }
+
     }
 }

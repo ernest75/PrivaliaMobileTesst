@@ -19,8 +19,8 @@ public interface MovieDBService {
     Observable<MoviesResults> getPopularMoviesRx(@Query("api_key")String apiKey, @Query("language") String language, @Query("page") int page);
 
 
-//    @GET("search/movie")
-//    Call<List<Movie>> getSearchMovies(@Query("query") String query, @Query("page") int page);
+    @GET("search/movie")
+    Observable<MoviesResults> getSearchMovies(@Query("api_key")String apiKey,@Query("query") String query, @Query("page") int page);
 
 
 }

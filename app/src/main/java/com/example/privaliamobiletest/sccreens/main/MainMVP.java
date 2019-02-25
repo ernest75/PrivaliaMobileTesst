@@ -12,6 +12,10 @@ public interface MainMVP {
 
         Observable<Movie> getPopularMoviesFromServer(int page);
 
+        Observable<Movie> getSearchedMovies(int page, String query);
+
+        int getTotalPagesCurrentPetition();
+
     }
 
     interface Presenter{
@@ -22,6 +26,10 @@ public interface MainMVP {
 
         void rxJavaUnsubscribe();
 
+        void loadSearchedData(CharSequence query);
+
+        int getTotalPagesCurrentPetition();
+
     }
 
     interface View{
@@ -30,9 +38,13 @@ public interface MainMVP {
 
         int getCurrentServerPage();
 
-        void showProgressbar();
+        void showProgressbarPagination();
 
-        void hideProgressbar();
+        void hideProgressbarPagination();
+
+        void showProgressbarBig();
+
+        void hideProgressbarBig();
 
         void setLoadingToTrue();
 
