@@ -93,6 +93,7 @@ public class MainPresenterTest {
                 });
 
         mCompositeDisposableMocked = new CompositeDisposable();
+
         SUT = new MainPresenter(mMainModelMocked);
 
         final Scheduler immediate = new Scheduler() {
@@ -138,10 +139,7 @@ public class MainPresenterTest {
             }
         });
 
-
     }
-
-
 
     @Test
     public void correctViewAssigned_correctViewStored() throws Exception {

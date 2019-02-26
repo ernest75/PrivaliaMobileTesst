@@ -21,7 +21,7 @@ public class MainModel implements MainMVP.Model {
 
     MovieDBService mMovieDbService;
 
-    private int mTotalPagesCurrentPetition;
+    public int mTotalPagesCurrentPetition;
 
 
     public MainModel(MovieDBService mMovieDbService) {
@@ -31,7 +31,6 @@ public class MainModel implements MainMVP.Model {
 
     @Override
     public Observable<Movie> getPopularMoviesFromServer(int page) {
-
         Observable<Movie> popularMoviesObservable = mMovieDbService.getPopularMoviesRx(Constants.API_KEY, Constants.US_ENGLISH_LANGUAGE, page)
                 .concatMap(new Function<MoviesResults, Observable<Movie>>() {
                     @Override
