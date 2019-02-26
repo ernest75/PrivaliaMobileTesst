@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">PrivaliaMobileTest</string>
     <string name="hint_movie_search">Type name of the movie</string>
+    <string name="no_results_from_search_1">No results for : </string>
+    <string name="no_results_from_search_2"> , press back to return to popular movies or type a new search</string>
+    <string name="no_results_to_show_message">No reults to show, type a new search or press back to return to popular movies</string>
+    <string name="no_more_results_to_show">No more results to show</string>
 </resources>

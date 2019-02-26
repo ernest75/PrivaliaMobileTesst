@@ -21,7 +21,7 @@ public class MainModel implements MainMVP.Model {
 
     MovieDBService mMovieDbService;
 
-    public int mTotalPagesCurrentPetition;
+    private int mTotalPagesCurrentPetition;
 
 
     public MainModel(MovieDBService mMovieDbService) {
@@ -46,7 +46,7 @@ public class MainModel implements MainMVP.Model {
     @Override
     public Observable<Movie> getSearchedMovies(int page, String query) {
 
-        Observable<Movie> searchedMoviesObservable = mMovieDbService.getSearchMovies(Constants.API_KEY,query,page)
+        Observable<Movie> searchedMoviesObservable = mMovieDbService.getSearchMovies(Constants.API_KEY, query, page)
                 .concatMap(new Function<MoviesResults, Observable<Movie>>() {
                     @Override
                     public Observable<Movie> apply(MoviesResults moviesResults) throws Exception {
@@ -55,12 +55,13 @@ public class MainModel implements MainMVP.Model {
                     }
                 });
 
-
         return searchedMoviesObservable;
     }
 
     @Override
     public int getTotalPagesCurrentPetition() {
-            return mTotalPagesCurrentPetition;
+        return mTotalPagesCurrentPetition;
     }
+
+
 }

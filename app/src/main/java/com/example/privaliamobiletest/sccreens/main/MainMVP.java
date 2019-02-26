@@ -52,7 +52,8 @@ public interface MainMVP {
 
         void showErrorFromNetwork(String message);
 
-        void showMessage(String s);
+        void showNoResultsFromSearchMessage();
+
 
     }
 }

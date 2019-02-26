@@ -1,5 +1,7 @@
 package com.example.privaliamobiletest.sccreens.main;
 
+import android.util.Log;
+
 import com.example.privaliamobiletest.networking.apimodels.Movie;
 
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import io.reactivex.schedulers.Schedulers;
 public class MainPresenter implements MainMVP.Presenter {
 
 
+    private final String LOG_TAG = getClass().getSimpleName();
     public MainMVP.View mView;
 
     MainMVP.Model mModel;
@@ -58,12 +61,7 @@ public class MainPresenter implements MainMVP.Presenter {
                     @Override
                     public void onComplete() {
                        //show data amb les movies noves afegides
-                        mView.showData(mMovies);
-                        mView.hideProgressbarBig();
-                        mView.hideProgressbarPagination();
-                        mTotalPagesCurrentPetition = mModel.getTotalPagesCurrentPetition();
-                        mView.setLoadingToTrue();
-                        mMovies.clear();
+                        handleOnComplete();
 
                     }
                 }));
@@ -90,21 +88,29 @@ public class MainPresenter implements MainMVP.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        mView.showErrorFromNetwork(e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-                        mView.showData(mMovies);
-                        mView.hideProgressbarBig();
-                        mView.hideProgressbarPagination();
-                        mView.setLoadingToTrue();
-                        mTotalPagesCurrentPetition = mModel.getTotalPagesCurrentPetition();
-                        mMovies.clear();
+                        handleOnComplete();
                     }
                 })
         );
 
+    }
+
+    private void handleOnComplete() {
+        if(mMovies.isEmpty()){
+            mView.showNoResultsFromSearchMessage();
+            Log.e(LOG_TAG,"TEXT SHOWING FRO PRESENTER");
+        }
+        mView.showData(mMovies);
+        mView.hideProgressbarBig();
+        mView.hideProgressbarPagination();
+        mTotalPagesCurrentPetition = mModel.getTotalPagesCurrentPetition();
+        mView.setLoadingToTrue();
+        mMovies.clear();
     }
 
     public int getTotalPagesCurrentPetition() {
