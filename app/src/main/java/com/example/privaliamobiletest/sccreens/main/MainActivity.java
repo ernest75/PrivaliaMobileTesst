@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
             mTvNoResultsFromSearch.setText(R.string.no_results_to_show_message);
             mTvNoResultsFromSearch.setVisibility(View.GONE);
         }
-
     }
 
     @Override
@@ -166,9 +165,7 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
     public void showNoResultsFromSearchMessage() {
         mTvNoResultsFromSearch.setText(getString(R.string.no_results_from_search_1) + mCharSequenceSearch + getString(R.string.no_results_from_search_2));
         mTvNoResultsFromSearch.setVisibility(View.VISIBLE);
-
     }
-
     //class methods
     private void configView() {
         mLayoutManager = new LinearLayoutManager(mContext);
@@ -214,7 +211,6 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
             }
         });
 
-
         mEtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -240,7 +236,6 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
                 isSearch = true;
                 pageServer = 1;
 
-
             }
         });
 
@@ -254,5 +249,6 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
         mMovieList.clear();
         mMoviesAdapter.notifyDataSetChanged();
         mPresenter.loadData();
+        mTvNoResultsFromSearch.setText(" ");
     }
 }

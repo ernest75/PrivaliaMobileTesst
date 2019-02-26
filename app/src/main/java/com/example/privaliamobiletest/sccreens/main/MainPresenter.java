@@ -14,15 +14,14 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainPresenter implements MainMVP.Presenter {
 
-
     private final String LOG_TAG = getClass().getSimpleName();
-    public MainMVP.View mView;
 
+    public MainMVP.View mView;
     MainMVP.Model mModel;
 
     public List<Movie> mMovies = new ArrayList<>();
 
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    public CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public MainPresenter(MainMVP.Model mModel) {
         this.mModel = mModel;
@@ -37,8 +36,7 @@ public class MainPresenter implements MainMVP.Presenter {
 
     @Override
     public void loadData() {
-        int currentPage = mView.getCurrentServerPage();
-        if (currentPage > 1) {
+        if (mView.getCurrentServerPage() > 1) {
             mView.showProgressbarPagination();
         }else{
             mView.showProgressbarBig();
@@ -100,16 +98,15 @@ public class MainPresenter implements MainMVP.Presenter {
 
     }
 
-    private void handleOnComplete() {
+    public void handleOnComplete() {
         if(mMovies.isEmpty()){
             mView.showNoResultsFromSearchMessage();
-            Log.e(LOG_TAG,"TEXT SHOWING FRO PRESENTER");
         }
         mView.showData(mMovies);
         mView.hideProgressbarBig();
         mView.hideProgressbarPagination();
-        mTotalPagesCurrentPetition = mModel.getTotalPagesCurrentPetition();
         mView.setLoadingToTrue();
+        mTotalPagesCurrentPetition = mModel.getTotalPagesCurrentPetition();
         mMovies.clear();
     }
 
