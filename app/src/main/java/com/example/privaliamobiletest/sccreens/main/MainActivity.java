@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
     Context mContext;
     @Inject
     MainMVP.Presenter mPresenter;
+
     //ButterKnife
     @BindView(R.id.etSearch)
     EditText mEtSearch;
@@ -93,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
         mPresenter.setView(null);
     }
 
-    //activity methods
     @Override
     public void onBackPressed() {
         if (isSearch) {

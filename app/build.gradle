@@ -69,4 +69,5 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
     testImplementation "com.squareup.okhttp3:mockwebserver:$mockserverVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 }
