@@ -32,6 +32,5 @@ public class Constants {
             "    }\n" +
             "      ]\n" +
             "}";
-    //http://image.tmdb.org/t/p/w500/xRWht48C2V8XNfzvPehyClOvDni.jpg
 
 }

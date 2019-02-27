@@ -9,7 +9,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -61,7 +64,8 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
 
     private boolean loading = true;
     private boolean isSearch;
-    int pastVisiblesItems, visibleItemCount, totalItemCount, pageServer;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+    //int pageServer;
     private CharSequence mCharSequenceSearch;
 
     private LinearLayoutManager mLayoutManager;
@@ -102,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
 
             super.onBackPressed();
         }
-
     }
 
     //mvp methods
@@ -118,10 +121,6 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
         }
     }
 
-    @Override
-    public int getCurrentServerPage() {
-        return pageServer;
-    }
 
     @Override
     public void showProgressbarPagination() {
@@ -172,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
         mRvMovies.setLayoutManager(mLayoutManager);
         mMoviesAdapter = new MoviesAdapter(mMovieList, mContext);
         mRvMovies.setAdapter(mMoviesAdapter);
-        pageServer = 1;
+        mPresenter.resetPageServer();
         mRvMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -185,8 +184,9 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
                     if (loading) {
                         if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                             loading = false;
-                            pageServer++;
-                            if (pageServer < mPresenter.getTotalPagesCurrentPetition()) {
+                            mPresenter.incrementPageServer();
+                            Log.e(LOG_TAG,mPresenter.getCurrentPagerServer() + "");
+                            if (mPresenter.getCurrentPagerServer() < mPresenter.getTotalPagesCurrentPetition()) {
                                 if (isSearch) {
                                     mPresenter.loadSearchedData(mCharSequenceSearch);
                                 } else {
@@ -194,14 +194,11 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
                                 }
 
                             }
-                            Log.e(LOG_TAG, pageServer + "");
-                            Log.e("...", "Last Item Wow !");
-                            //Do pagination.. i.e. fetch new data
 
                         }
                     } else {
                         //inform user no more results
-                        if (pageServer == mPresenter.getTotalPagesCurrentPetition() && !mRvMovies.canScrollVertically(1)) {
+                        if (mPresenter.getCurrentPagerServer() == mPresenter.getTotalPagesCurrentPetition() && !mRvMovies.canScrollVertically(1)) {
                             Snackbar.make(mMainLayout, R.string.no_more_results_to_show, Snackbar.LENGTH_LONG).show();
 
                         }
@@ -223,6 +220,9 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
                 mMovieList.clear();
                 mMoviesAdapter.notifyDataSetChanged();
                 if (charSequence.length() > 0) {
+                    //cancel last search
+                    mPresenter.rxJavaUnsubscribe();
+                    //star new search
                     mPresenter.loadSearchedData(charSequence);
                     mCharSequenceSearch = charSequence;
                 } else {
@@ -234,10 +234,14 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
             @Override
             public void afterTextChanged(Editable editable) {
                 isSearch = true;
-                pageServer = 1;
-
+                mPresenter.resetPageServer();
             }
         });
+
+        ImageSpan imageHint = new ImageSpan(mContext, R.drawable.ic_search_black_24dp);
+        SpannableString spannableString = new SpannableString("  Type name of the movie");
+        spannableString.setSpan(imageHint, 0, 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        mEtSearch.setHint(spannableString);
 
     }
 
@@ -245,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
         mEtSearch.setText("");
         mCharSequenceSearch = null;
         isSearch = false;
-        pageServer = 1;
+        mPresenter.resetPageServer();
         mMovieList.clear();
         mMoviesAdapter.notifyDataSetChanged();
         mPresenter.loadData();

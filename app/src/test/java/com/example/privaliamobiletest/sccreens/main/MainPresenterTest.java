@@ -57,6 +57,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MainPresenterTest {
+
     public static final String SOME_DATA = "some data";
     public static final String WRONG_DATA = "wrong data";
 
@@ -163,7 +164,8 @@ public class MainPresenterTest {
     public void loadData_currentPageBiggerThan1_showProgressBarPagination() throws Exception {
         // Arrange
         SUT.setView(mMainViewMocked);
-        when(SUT.mView.getCurrentServerPage()).thenReturn(2);
+        //when(SUT.mView.getCurrentServerPage()).thenReturn(2);
+        SUT.mCurrentPageServer = 2;
         when(SUT.mModel.getPopularMoviesFromServer(anyInt())).thenReturn(new Observable<Movie>() {
             @Override
             protected void subscribeActual(Observer<? super Movie> observer) {
@@ -180,7 +182,7 @@ public class MainPresenterTest {
     public void loadData_currentPageIs1_showBigProgressBarInvoked() throws Exception {
         // Arrange
         SUT.setView(mMainViewMocked);
-        when(SUT.mView.getCurrentServerPage()).thenReturn(1);
+        SUT.mCurrentPageServer = 1;
         when(SUT.mModel.getPopularMoviesFromServer(anyInt())).thenReturn(new Observable<Movie>() {
             @Override
             protected void subscribeActual(Observer<? super Movie> observer) {
@@ -199,7 +201,7 @@ public class MainPresenterTest {
         // Arrange
         SUT.setView(mMainViewMocked);
         SUT.mModel = mMainModelMocked;
-        when(SUT.mView.getCurrentServerPage()).thenReturn(10);
+        SUT.mCurrentPageServer = 10;
         when(SUT.mModel.getPopularMoviesFromServer(anyInt())).thenReturn(new Observable<Movie>() {
             @Override
             protected void subscribeActual(Observer<? super Movie> observer) {
@@ -218,7 +220,7 @@ public class MainPresenterTest {
         // Arrange
         SUT.setView(mMainViewMocked);
         SUT.mModel = mMainModelMocked;
-        when(SUT.mView.getCurrentServerPage()).thenReturn(10);
+        SUT.mCurrentPageServer = 10;
         Observable<Movie> movieObservable = Observable.just(new Movie());
         when(SUT.mModel.getPopularMoviesFromServer(anyInt())).thenReturn(movieObservable);
         // Act
@@ -234,7 +236,7 @@ public class MainPresenterTest {
         // Arrange
         SUT.setView(mMainViewMocked);
         SUT.mModel = mMainModelMocked;
-        when(SUT.mView.getCurrentServerPage()).thenReturn(10);
+        SUT.mCurrentPageServer = 10;
         Exception exception = new RuntimeException(WRONG_DATA);
         Observable<Movie> movieObservable = Observable.just(new Movie()).concatWith(Observable.<Movie>error(exception));
         when(SUT.mModel.getPopularMoviesFromServer(anyInt())).thenReturn(movieObservable);
@@ -248,7 +250,7 @@ public class MainPresenterTest {
     public void loadSearchedData_currentPageBiggerThan1_showProgressBarPagination() throws Exception {
         // Arrange
         SUT.setView(mMainViewMocked);
-        when(SUT.mView.getCurrentServerPage()).thenReturn(2);
+        SUT.mCurrentPageServer = 2;
         when(SUT.mModel.getSearchedMovies(anyInt(),anyString())).thenReturn(new Observable<Movie>() {
             @Override
             protected void subscribeActual(Observer<? super Movie> observer) {
@@ -265,7 +267,7 @@ public class MainPresenterTest {
     public void loadSearchedData_currentPageIs1_showBigProgressBarInvoked() throws Exception {
         // Arrange
         SUT.setView(mMainViewMocked);
-        when(SUT.mView.getCurrentServerPage()).thenReturn(1);
+        SUT.mCurrentPageServer = 1;
         when(SUT.mModel.getSearchedMovies(anyInt(),anyString())).thenReturn(new Observable<Movie>() {
             @Override
             protected void subscribeActual(Observer<? super Movie> observer) {
@@ -284,7 +286,7 @@ public class MainPresenterTest {
         // Arrange
         SUT.setView(mMainViewMocked);
         SUT.mModel = mMainModelMocked;
-        when(SUT.mView.getCurrentServerPage()).thenReturn(10);
+        SUT.mCurrentPageServer = 10;
         when(SUT.mModel.getSearchedMovies(anyInt(),anyString())).thenReturn(new Observable<Movie>() {
             @Override
             protected void subscribeActual(Observer<? super Movie> observer) {
@@ -303,7 +305,7 @@ public class MainPresenterTest {
         // Arrange
         SUT.setView(mMainViewMocked);
         SUT.mModel = mMainModelMocked;
-        when(SUT.mView.getCurrentServerPage()).thenReturn(10);
+        SUT.mCurrentPageServer = 10;
         Observable<Movie> movieObservable = Observable.just(new Movie());
         when(SUT.mModel.getSearchedMovies(anyInt(),anyString())).thenReturn(movieObservable);
         // Act
@@ -319,7 +321,7 @@ public class MainPresenterTest {
         // Arrange
         SUT.setView(mMainViewMocked);
         SUT.mModel = mMainModelMocked;
-        when(SUT.mView.getCurrentServerPage()).thenReturn(10);
+        SUT.mCurrentPageServer = 10;
         Exception exception = new RuntimeException(WRONG_DATA);
         Observable<Movie> movieObservable = Observable.just(new Movie()).concatWith(Observable.<Movie>error(exception));
         when(SUT.mModel.getSearchedMovies(anyInt(),anyString())).thenReturn(movieObservable);
@@ -401,6 +403,36 @@ public class MainPresenterTest {
         SUT.handleOnComplete();
         // Assert
         verify(mMainModelMocked,times(1)).getTotalPagesCurrentPetition();
+    }
+
+    @Test
+    public void incrementServerPage_incrementsCurrentPage() throws Exception {
+        // Arrange
+        SUT.mCurrentPageServer = 4;
+        // Act
+        SUT.incrementPageServer();
+        // Assert
+        assertThat(SUT.mCurrentPageServer,is(5));
+    }
+
+    @Test
+    public void resetServerPage_resetsCurrentPage() throws Exception {
+        // Arrange
+        SUT.mCurrentPageServer = 4;
+        // Act
+        SUT.resetPageServer();
+        // Assert
+        assertThat(SUT.mCurrentPageServer,is(1));
+    }
+
+    @Test
+    public void getCurrentServerPage_returnCorrectPage() throws Exception {
+        // Arrange
+        SUT.mCurrentPageServer = 25;
+        // Act
+        int result = SUT.getCurrentPagerServer();
+        // Assert
+        assertThat(result,is(SUT.getCurrentPagerServer()));
     }
 
     // region helper methods -----------------------------------------------------------------------

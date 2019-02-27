@@ -27,6 +27,8 @@ public class MainPresenter implements MainMVP.Presenter {
         this.mModel = mModel;
     }
 
+    public int mCurrentPageServer;
+
     private int mTotalPagesCurrentPetition;
 
     @Override
@@ -36,13 +38,13 @@ public class MainPresenter implements MainMVP.Presenter {
 
     @Override
     public void loadData() {
-        if (mView.getCurrentServerPage() > 1) {
+        if (mCurrentPageServer > 1) {
             mView.showProgressbarPagination();
         }else{
             mView.showProgressbarBig();
         }
         compositeDisposable.add(
-        mModel.getPopularMoviesFromServer(mView.getCurrentServerPage())
+        mModel.getPopularMoviesFromServer(mCurrentPageServer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<Movie>() {
@@ -58,9 +60,7 @@ public class MainPresenter implements MainMVP.Presenter {
 
                     @Override
                     public void onComplete() {
-                       //show data amb les movies noves afegides
                         handleOnComplete();
-
                     }
                 }));
 
@@ -68,14 +68,14 @@ public class MainPresenter implements MainMVP.Presenter {
 
     @Override
     public void loadSearchedData(CharSequence query) {
-        int currentPage = mView.getCurrentServerPage();
-        if (currentPage>1) {
+        if (mCurrentPageServer>1) {
             mView.showProgressbarPagination();
         }else{
+            mView.hideProgressbarPagination();
             mView.showProgressbarBig();
         }
         compositeDisposable.add(
-                mModel.getSearchedMovies(mView.getCurrentServerPage(),query.toString())
+                mModel.getSearchedMovies(mCurrentPageServer,query.toString())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<Movie>() {
@@ -112,6 +112,21 @@ public class MainPresenter implements MainMVP.Presenter {
 
     public int getTotalPagesCurrentPetition() {
         return mTotalPagesCurrentPetition;
+    }
+
+    @Override
+    public int incrementPageServer() {
+        return mCurrentPageServer++;
+    }
+
+    @Override
+    public int resetPageServer() {
+        return mCurrentPageServer = 1;
+    }
+
+    @Override
+    public int getCurrentPagerServer() {
+        return mCurrentPageServer;
     }
 
     @Override

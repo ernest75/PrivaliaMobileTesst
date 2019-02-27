@@ -30,13 +30,17 @@ public interface MainMVP {
 
         int getTotalPagesCurrentPetition();
 
+        int incrementPageServer();
+
+        int resetPageServer();
+
+        int getCurrentPagerServer();
+
     }
 
     interface View{
 
         void showData(List<Movie> mMovieList);
-
-        int getCurrentServerPage();
 
         void showProgressbarPagination();
 

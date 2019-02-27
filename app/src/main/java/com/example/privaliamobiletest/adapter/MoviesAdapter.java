@@ -49,13 +49,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         if (movie.getReleaseDate().toString().length()>0) {
             year = movie.getReleaseDate().substring(0, 4);
         }else{
-            year = "Unknown";
+            year = mContext.getString(R.string.year_unknown);
         }
         viewHolder.mTvMovieTittle.setText(movie.getTitle() + " ( " + year + " )");
         viewHolder.mTvOverview.setText(movie.getOverview());
 
         final RequestOptions options = new RequestOptions()
                 .fitCenter()
+                .error(R.drawable.noimage)
                 .placeholder(R.drawable.ic_file_download_black_24dp)
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
 
